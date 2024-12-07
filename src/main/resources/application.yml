@@ -1,2 +1,16 @@
 server:
   port: 4321
+allowAllCors:
+  learnFilter: false
+  # 使用内置跨域逻辑
+  builtin: false
+  # 使用自定义跨域逻辑
+  personal: false
+spring:
+  web:
+    resources:
+      # 指定静态资源的部署路径
+      static-locations: classpath:/static/
+  webflux:
+    # 指定静态资源的路径前缀
+    static-path-pattern: /**
