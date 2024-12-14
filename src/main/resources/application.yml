@@ -14,3 +14,7 @@ spring:
   webflux:
     # 指定静态资源的路径前缀
     static-path-pattern: /**
+  r2dbc:
+    url: r2dbc:postgresql://10.0.0.9:5432/shbh
+    username: postgres
+    password: postgres
