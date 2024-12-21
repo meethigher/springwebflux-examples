@@ -51,10 +51,10 @@ public class MonoExamples {
          * Mono.delay表示先等待后计算
          */
         Mono<String> delayEleMono = Mono.delay(Duration.ofSeconds(5)).then(Mono.just(new Date().toString())).delayElement(Duration.ofSeconds(10));
-        delayEleMono.subscribe(t -> {
-            System.out.println(t);
-            System.out.println(new Date().toString());
-        });
+//        delayEleMono.subscribe(t -> {
+//            System.out.println(t);
+//            System.out.println(new Date().toString());
+//        });
 
         /**
          * Mono.error会将异常返回到上级，需要通过subscribe注册errorConsumer来实现
@@ -73,8 +73,8 @@ public class MonoExamples {
             return s + "-map";
         }).cache(Duration.ofSeconds(10));
         //订阅两次，就会执行原Mono链两次
-        tMono.subscribe();
-        tMono.subscribe();
+//        tMono.subscribe();
+//        tMono.subscribe();
 
         /**
          * 给Mono链设置timeout参数
@@ -87,7 +87,22 @@ public class MonoExamples {
             int i = 1 / 0;
             return Mono.just(s);
         });
-        stringMono.subscribe(t -> {
+//        stringMono.subscribe(t -> {
+//            log.info("success {}", t);
+//        }, e -> {
+//            log.error("error", e);
+//        });
+
+        /**
+         * 像在springwebflux，我们接口只需要返回Mono或者Flux即可，至于何时subscribe，我们不需要操心
+         */
+        Mono<String> mono1 = Mono.just("test").map(s -> {
+                    int i = 1 / 0;
+                    return s;
+                })
+                // 遇到错误就重新返回个新的
+                .onErrorResume((Function<Throwable, Mono<String>>) throwable -> Mono.just("出错啦"));
+        mono1.subscribe(t -> {
             log.info("success {}", t);
         }, e -> {
             log.error("error", e);

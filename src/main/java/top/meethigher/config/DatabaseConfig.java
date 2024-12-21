@@ -32,7 +32,7 @@ public class DatabaseConfig {
         return new PostgresqlConnectionFactory(
                 PostgresqlConnectionConfiguration.builder()
                         .host("10.0.0.9")
-                        .database("shbh")
+                        .database("lll")
                         .username("postgres")
                         .password("postgres")
                         .build()

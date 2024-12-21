@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/db")
-public class R2DBCController {
+public class DatabaseClientController {
 
     @Resource
     private RecordService recordService;
