@@ -1,20 +1,18 @@
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.concurrent.Flow.*;
+
 /**
- * 了解Reactive Streams中Publisher、Subscriber、Subscription的基础使用
+ * 了解JDK9+的java.util.concurrent.Flow中Publisher、Subscriber、Subscription的基础使用。JDK是在ReactiveStreams之后定义的Flow，现有的ReactiveStreams中也有针对Flow的适配，支持两者的API进行转换，参考org.reactivestreams.FlowAdapters
  *
  * @author <a href="https://meethigher.top">chenchuancheng</a>
- * @since 2024/12/28 23:00
+ * @since 2024/12/28 22:59
  */
-public class Example01 {
-
+public class Example02 {
     private static final Logger log = LoggerFactory.getLogger(Example01.class);
 
 
@@ -27,11 +25,6 @@ public class Example01 {
 
             private final AtomicInteger sendItems = new AtomicInteger(0);
 
-            /**
-             * request数据
-             * 内部onNext会request后面的数据，而onComplete应该要等所有的数据消费完毕后，才会执行。
-             * 故需要加锁保证线程安全，此处采取CAS。源码参考reactor.core.publisher.Operators.ScalarSubscription#request(long)
-             */
             @Override
             public void request(long n) {
                 if (n > 0) {
@@ -104,17 +97,6 @@ public class Example01 {
 
     public static void main(String[] args) {
 
-        // 订阅Flux
-        // Flux.just("first", "second", "third").delayElements(Duration.ofSeconds(2))
-        //         .subscribe(getSubscriber());
-
-        /**
-         * org.reactivestreams.Publisher: 发布者
-         * org.reactivestreams.Subscriber: 订阅者
-         * org.reactivestreams.Subscription: 发布者和订阅者之间的桥梁，数据流控制的核心机制。
-         */
-
-        // 订阅自定义Publisher
         getPublisher("first", "second", "third", "fourth", "fifth").subscribe(getSubscriber());
 
 
