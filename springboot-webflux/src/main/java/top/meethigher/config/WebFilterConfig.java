@@ -22,7 +22,7 @@ public class WebFilterConfig {
 
 
     @Bean
-    @Order(0)
+    @Order(0) // 值越小，优先级越高
     @ConditionalOnProperty(name = "allowAllCors.learnFilter", havingValue = "true")
     public WebFilter aFilter() {
         /**
