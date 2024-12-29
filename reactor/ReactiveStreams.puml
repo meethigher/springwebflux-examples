@@ -1,0 +1,25 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title ReactiveStreams流程
+header meethigher
+autonumber
+
+
+participant Subscriber as sub
+control Subscription as conn
+participant Publisher as pub
+
+sub->pub: subscribe(): 进行注册，成为订阅者
+pub-->sub: onSubscribe(): 监听注册响应
+sub->conn: request(n): 请求获取N个元素
+conn->pub
+pub-->sub: onNext(item): 监听获取到的元素。每次onNext只会获取一个元素
+pub--[#red]>sub: onError(Throwable t)
+pub--[#blue]>sub: onComplete()
+note left
+onError为失败结束事件
+onComplete为成功结束事件
+这两者互斥
+end note
+
+@enduml
