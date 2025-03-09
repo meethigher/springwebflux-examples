@@ -16,6 +16,9 @@ import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAd
 import org.springframework.web.server.WebFilter;
 import reactor.core.publisher.Mono;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Configuration
 @Slf4j
 public class WebFilterConfig {
@@ -30,9 +33,28 @@ public class WebFilterConfig {
          * 在webflux中同理。Filter对应WebFilter，Servlet对应WebHandler
          */
         return (exchange, chain) -> {
-            log.info("aFilter start");
-            return chain.filter(exchange).doOnSuccess(t -> log.info("aFilter end"));
+            ServerHttpRequest request = exchange.getRequest();
+            final String method = request.getMethodValue();
+            final String uri = request.getURI().toString();
+            final String remoteAddress = request.getRemoteAddress().toString();
+            final Map<String, String> reqHeaders = new LinkedHashMap<>();
+            for (String key : request.getHeaders().keySet()) {
+                reqHeaders.put(key, request.getHeaders().get(key).toString());
+            }
+            log.info("{} start: method: {} -- uri: {} -- headers: {}", remoteAddress, method, uri, reqHeaders);
+            return chain.filter(exchange).doFinally(f -> {
+                ServerHttpResponse response = exchange.getResponse();
+                HttpStatus statusCode = response.getStatusCode();
+                final int code = statusCode == null ? -1 : statusCode.value();
+                HttpHeaders headers = exchange.getResponse().getHeaders();
+                final Map<String, String> respHeaders = new LinkedHashMap<>();
+                for (String key : headers.keySet()) {
+                    respHeaders.put(key, headers.get(key).toString());
+                }
+                log.info("{} end: statusCode: {} -- method: {} -- uri: {} -- headers: {}", remoteAddress, code, method, uri, respHeaders);
+            });
         };
+
     }
 
     @Bean
